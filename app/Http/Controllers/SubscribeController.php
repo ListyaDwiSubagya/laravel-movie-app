@@ -50,3 +50,4 @@ class SubscribeController extends Controller implements HasMiddleware
         return view('subscribe.success');
     }
 }
+

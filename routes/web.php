@@ -1,13 +1,33 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubscribeController;
+use Illuminate\Http\Request; // Pastikan ini yang di-import
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Rute Publik (Jika ada)
+Route::resource('products', ProductController::class);
 
-Route::get('/subscribe/plan', [SubscribeController::class, 'showPlans'])->name('subscribe.plans');
-Route::get('/subscribe/plan/{plan}', [SubscribeController::class, 'checkoutPlan'])->name('subscribe.checkout');
-Route::post('/subscribe/checkout', [SubscribeController::class, 'processCheckout'])->name('subscribe.process');
-Route::get('/subscribe/success', [SubscribeController::class, 'showSuccess'])->name('subscribe.success');
+// Rute yang Memerlukan Login
+Route::middleware(['auth'])->group(function () {
+
+    // Home dengan pengecekan limit device
+    Route::get('/home', function () {
+        return view('home');
+    })->middleware('check.device.limit')->name('home');
+
+    // Logout Kustom
+    // Memanggil Controller Fortify secara manual untuk menyisipkan middleware tambahan
+    Route::post('/logout', function (Request $request) {
+        return app(\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class)->destroy($request);
+    })->middleware(['logout.device'])->name('logout');
+
+    // Rute Langganan (Subscription)
+    Route::prefix('subscribe')->name('subscribe.')->group(function () {
+        Route::get('/plan', [SubscribeController::class, 'showPlans'])->name('plans');
+        Route::get('/plan/{plan}', [SubscribeController::class, 'checkoutPlan'])->name('checkout');
+        Route::post('/checkout', [SubscribeController::class, 'processCheckout'])->name('process');
+        Route::get('/success', [SubscribeController::class, 'showSuccess'])->name('success');
+    });
+
+});

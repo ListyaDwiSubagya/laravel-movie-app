@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -45,9 +46,14 @@ class User extends Authenticatable
         ];
     }
 
-    public function memberships(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function memberships(): HasMany
     {
         return $this->hasMany(Membership::class);
+    }
+
+    public function device(): HasMany
+    {
+        return $this->hasMany(UserDevice::class);
     }
 
     public function hasMembershipPlan(): bool
@@ -56,5 +62,26 @@ class User extends Authenticatable
             ->where('active', true)
             ->where('end_date', '>', now())
             ->exists();
+    }
+
+    public function getCurrentPlan()
+    {
+        $activeMembership = $this->memberships()
+            ->where('active', true)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->latest()
+            ->first();
+
+        if (!$activeMembership) {
+            return null;
+        }
+
+        return Plan::find($activeMembership->plan_id);
+    }
+
+    public function devices(): HasMany
+    {
+        return $this->hasMany(UserDevice::class);
     }
 }
