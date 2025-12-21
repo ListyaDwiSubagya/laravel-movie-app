@@ -5,18 +5,20 @@
             <!-- <span class="navbar-toggler-icon"></span> -->
             <i class="text-white fa-solid fa-bars"></i>
         </button>
-        <a class="navbar-brand" href="#">
-            <img class="navbar-icon" src="assets/img/codeflix_logo.png" alt="">
+        <a class="navbar-brand" href="/home">
+            <img class="navbar-icon" src="{{ asset('assets/img/codeflix_logo.png') }}" alt="">
         </a>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
             <x-category-nav />
-            <form class="d-flex me-md-5" role="search">
-                <input class="form-control search-box" type="search" placeholder="Cari Disini" aria-label="Search">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <form class="d-flex me-md-5" role="search" method="GET"
+            action="{{ route('movies.search') }}">
+                <input class="form-control search-box" name="q" value="{{ request('q') }}" type="search" placeholder="Cari Disini" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass search-icon" 
+                onclick="this.closest('form').submit();" style="cursor: pointer"></i>
             </form>
             <ul class="pt-3 nav-icon d-flex">
                 <li class="dropdown me-3">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         <i class="fa-solid fa-bell bell-icon"></i>
                     </a>

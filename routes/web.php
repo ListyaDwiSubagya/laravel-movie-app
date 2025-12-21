@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubscribeController;
+use App\Models\Movie;
 use Illuminate\Http\Request; // Pastikan ini yang di-import
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +17,19 @@ Route::middleware(['auth'])->group(function () {
     // Home dengan pengecekan limit device
     Route::get('/home', [MovieController::class, 'index']
     )->name('home');
+
+    Route::get('/movies', [MovieController::class, 'all'])
+    ->name('movies.index');
+
+    Route::get('/movies/search', [MovieController::class, 'search'])
+    ->name('movies.search');
+
+    Route::get('/movies/{movie:slug}', [MovieController::class, 'show'])
+    ->name('movies.show');
+
+    Route::get('/categories/{category:slug}', [CategoryController::class, 'show'])
+    ->name('categories.show');
+
 
     // Logout Kustom
     // Memanggil Controller Fortify secara manual untuk menyisipkan middleware tambahan
