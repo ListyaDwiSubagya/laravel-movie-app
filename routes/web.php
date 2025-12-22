@@ -9,13 +9,12 @@ use Illuminate\Http\Request; // Pastikan ini yang di-import
 use Illuminate\Support\Facades\Route;
 
 // Rute Publik (Jika ada)
-Route::resource('products', ProductController::class);
 
 // Rute yang Memerlukan Login
 Route::middleware(['auth'])->group(function () {
 
     // Home dengan pengecekan limit device
-    Route::get('/home', [MovieController::class, 'index']
+    Route::get('/', [MovieController::class, 'index']
     )->name('home');
 
     Route::get('/movies', [MovieController::class, 'all'])
