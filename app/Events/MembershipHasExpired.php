@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Membership;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -17,7 +18,7 @@ class MembershipHasExpired
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(public Membership $membership)
     {
         //
     }

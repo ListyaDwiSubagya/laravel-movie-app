@@ -3,7 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Jobs\CheckMemberhipStatus;
+use Illuminate\Bus\Batch;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 
 class CheckMemberships extends Command
 {
@@ -26,7 +29,15 @@ class CheckMemberships extends Command
      */
     public function handle()
     {
-        CheckMemberhipStatus::dispatch();
-        $this->info('Membership check job has been dispatched');
+        Bus::batch([
+            new CheckMemberhipStatus(),
+        ])->then(function (Batch $batch) {
+            Log::info('Membership checks completed');
+        })->catch(function (Batch $batch, $e) {
+            Log::error('Membership check failed: ' . $e->getMessage());
+        })->finally(function (Batch $batch) {
+            Log::info('Membership check finished');
+        })->dispatch();
+
     }
 }

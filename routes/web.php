@@ -1,9 +1,11 @@
 <?php
 
+use App\Events\MembershipHasExpired;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubscribeController;
+use App\Models\Membership;
 use App\Models\Movie;
 use Illuminate\Http\Request; // Pastikan ini yang di-import
 use Illuminate\Support\Facades\Route;
@@ -29,6 +31,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/categories/{category:slug}', [CategoryController::class, 'show'])
     ->name('categories.show');
 
+    Route::get('/text-expired', function(){
+        $membership = Membership::find(1);
+        event(new MembershipHasExpired($membership));
+
+        return 'Event fired';
+    });
 
     // Logout Kustom
     // Memanggil Controller Fortify secara manual untuk menyisipkan middleware tambahan

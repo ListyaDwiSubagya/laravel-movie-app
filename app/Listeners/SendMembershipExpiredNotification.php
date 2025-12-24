@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\MembershipHasExpired;
+use App\Notifications\MembershipExpiredNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -21,6 +22,6 @@ class SendMembershipExpiredNotification
      */
     public function handle(MembershipHasExpired $event): void
     {
-        //
+        $event->membership->user->notify(new MembershipExpiredNotification($event->membership));
     }
 }
